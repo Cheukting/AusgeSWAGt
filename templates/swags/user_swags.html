@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}My Swags - Inswags{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>My Swags</h1>
+    <a href="{% url 'swag_create' %}" class="btn btn-primary">Add New Swag</a>
+</div>
+
+{% if swags %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for swag in swags %}
+            <div class="col">
+                <div class="card h-100 swag-card">
+                    {% if swag.photo %}
+                        <img src="{{ swag.photo.url }}" class="card-img-top swag-img" alt="{{ swag.name }}">
+                    {% else %}
+                        <div class="card-img-top swag-img bg-light d-flex align-items-center justify-content-center">
+                            <span class="text-muted">No Image</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ swag.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ swag.company }}</h6>
+                        <p class="card-text">
+                            <small class="text-muted">Conference: {{ swag.conference }}</small><br>
+                            <small class="text-muted">Added on: {{ swag.created_at|date:"M d, Y" }}</small>
+                        </p>
+                        <div class="mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= swag.rating %}
+                                    <span class="text-warning">★</span>
+                                {% else %}
+                                    <span class="text-muted">☆</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex">
+                            <a href="{% url 'swag_detail' swag.pk %}" class="btn btn-sm btn-outline-primary me-2">View Details</a>
+                            <a href="{% url 'swag_update' swag.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        You haven't added any swags yet.
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'swag_create' %}" class="btn btn-primary">Add Your First Swag</a>
+    </div>
+{% endif %}
+{% endblock %}

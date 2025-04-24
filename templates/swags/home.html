@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Inswags{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Welcome to Inswags</h1>
+        <p class="lead">Track and share your conference swag collection!</p>
+    </div>
+    <div class="col-md-4">
+        <form method="get" class="d-flex">
+            <input type="text" name="query" class="form-control me-2" placeholder="Search swags..." value="{{ search_form.query.value|default:'' }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+{% if swags %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for swag in swags %}
+            <div class="col">
+                <div class="card h-100 swag-card">
+                    {% if swag.photo %}
+                        <img src="{{ swag.photo.url }}" class="card-img-top swag-img" alt="{{ swag.name }}">
+                    {% else %}
+                        <div class="card-img-top swag-img bg-light d-flex align-items-center justify-content-center">
+                            <span class="text-muted">No Image</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ swag.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ swag.company }}</h6>
+                        <p class="card-text">
+                            <small class="text-muted">Conference: {{ swag.conference }}</small><br>
+                            <small class="text-muted">Added by: {{ swag.user.username }}</small>
+                        </p>
+                        <div class="mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= swag.rating %}
+                                    <span class="text-warning">★</span>
+                                {% else %}
+                                    <span class="text-muted">☆</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'swag_detail' swag.pk %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        {% if search_form.query.value %}
+            No swags found matching your search.
+        {% else %}
+            No swags have been added yet. Be the first to add one!
+        {% endif %}
+    </div>
+    {% if user.is_authenticated %}
+        <div class="text-center mt-4">
+            <a href="{% url 'swag_create' %}" class="btn btn-primary">Add Your First Swag</a>
+        </div>
+    {% else %}
+        <div class="text-center mt-4">
+            <a href="{% url 'login' %}" class="btn btn-primary">Login to Add Swags</a>
+            <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

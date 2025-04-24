@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ swag.name }} - Inswags{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">{{ swag.name }}</h2>
+                <div>
+                    {% if user == swag.user %}
+                        <a href="{% url 'swag_update' swag.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    {% endif %}
+                    <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary">Back to Home</a>
+                </div>
+            </div>
+            
+            <div class="row g-0">
+                <div class="col-md-6">
+                    {% if swag.photo %}
+                        <img src="{{ swag.photo.url }}" class="img-fluid rounded-start" alt="{{ swag.name }}">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
+                            <span class="text-muted">No Image Available</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ swag.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ swag.company }}</h6>
+                        
+                        <p class="card-text">
+                            <strong>Conference:</strong> {{ swag.conference }}<br>
+                            <strong>Added by:</strong> {{ swag.user.username }}<br>
+                            <strong>Added on:</strong> {{ swag.created_at|date:"F j, Y" }}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <strong>Rating:</strong>
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= swag.rating %}
+                                    <span class="text-warning">★</span>
+                                {% else %}
+                                    <span class="text-muted">☆</span>
+                                {% endif %}
+                            {% endfor %}
+                            ({{ swag.rating }}/5)
+                        </div>
+                        
+                        {% if swag.comments %}
+                            <div class="mb-3">
+                                <strong>Comments:</strong>
+                                <p class="card-text">{{ swag.comments|linebreaks }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

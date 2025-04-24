@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Inswags{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">{{ title }}</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_name" class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                               id="id_name" value="{{ form.name.value|default:'' }}" required>
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.name.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_company" class="form-label">Company</label>
+                        <input type="text" name="company" class="form-control {% if form.company.errors %}is-invalid{% endif %}" 
+                               id="id_company" value="{{ form.company.value|default:'' }}" required>
+                        {% if form.company.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.company.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_conference" class="form-label">Conference</label>
+                        <input type="text" name="conference" class="form-control {% if form.conference.errors %}is-invalid{% endif %}" 
+                               id="id_conference" value="{{ form.conference.value|default:'' }}" required>
+                        {% if form.conference.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.conference.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_rating" class="form-label">Rating (1-5)</label>
+                        <input type="number" name="rating" min="1" max="5" class="form-control {% if form.rating.errors %}is-invalid{% endif %}" 
+                               id="id_rating" value="{{ form.rating.value|default:'5' }}" required>
+                        {% if form.rating.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.rating.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_photo" class="form-label">Photo</label>
+                        <input type="file" name="photo" class="form-control {% if form.photo.errors %}is-invalid{% endif %}" 
+                               id="id_photo" accept="image/*">
+                        {% if form.photo.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.photo.errors.0 }}
+                            </div>
+                        {% endif %}
+                        {% if form.instance.photo %}
+                            <div class="mt-2">
+                                <p>Current photo:</p>
+                                <img src="{{ form.instance.photo.url }}" alt="{{ form.instance.name }}" style="max-width: 200px; max-height: 200px;">
+                                <p class="form-text">Upload a new photo to replace the current one.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_comments" class="form-label">Comments</label>
+                        <textarea name="comments" class="form-control {% if form.comments.errors %}is-invalid{% endif %}" 
+                                  id="id_comments" rows="4">{{ form.comments.value|default:'' }}</textarea>
+                        {% if form.comments.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.comments.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
