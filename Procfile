@@ -1,0 +1,1 @@
+web: gunicorn Ausgeswagt.wsgi:application

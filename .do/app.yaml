@@ -1,0 +1,28 @@
+name: ausgeswagt
+services:
+- name: web
+  environment_slug: python
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: your-github-username/Inswags
+  build_command: pip install -r requirements.txt && python manage.py collectstatic --noinput
+  run_command: gunicorn Ausgeswagt.wsgi:application
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  routes:
+  - path: /
+  envs:
+  - key: DEBUG
+    scope: RUN_TIME
+    value: "False"
+  - key: SECRET_KEY
+    scope: RUN_TIME
+    value: ${SECRET_KEY}
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: ${DATABASE_URL}
+  - key: ALLOWED_HOSTS
+    scope: RUN_TIME
+    value: ${APP_DOMAIN}
