@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ title }} - Inswags{% endblock %}
+{% block title %}{{ title }} - Ausgeswagt{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -12,7 +12,7 @@
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
+
                     <div class="mb-3">
                         <label for="id_name" class="form-label">Name</label>
                         <input type="text" name="name" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
@@ -23,7 +23,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="id_company" class="form-label">Company</label>
                         <input type="text" name="company" class="form-control {% if form.company.errors %}is-invalid{% endif %}" 
@@ -34,7 +34,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="id_conference" class="form-label">Conference</label>
                         <input type="text" name="conference" class="form-control {% if form.conference.errors %}is-invalid{% endif %}" 
@@ -45,7 +45,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="id_rating" class="form-label">Rating (1-5)</label>
                         <input type="number" name="rating" min="1" max="5" class="form-control {% if form.rating.errors %}is-invalid{% endif %}" 
@@ -56,7 +56,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="id_photo" class="form-label">Photo</label>
                         <input type="file" name="photo" class="form-control {% if form.photo.errors %}is-invalid{% endif %}" 
@@ -74,7 +74,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="id_comments" class="form-label">Comments</label>
                         <textarea name="comments" class="form-control {% if form.comments.errors %}is-invalid{% endif %}" 
@@ -85,7 +85,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>

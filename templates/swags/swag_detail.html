@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ swag.name }} - Inswags{% endblock %}
+{% block title %}{{ swag.name }} - Ausgeswagt{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -15,7 +15,7 @@
                     <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary">Back to Home</a>
                 </div>
             </div>
-            
+
             <div class="row g-0">
                 <div class="col-md-6">
                     {% if swag.photo %}
@@ -30,13 +30,13 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ swag.name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ swag.company }}</h6>
-                        
+
                         <p class="card-text">
                             <strong>Conference:</strong> {{ swag.conference }}<br>
                             <strong>Added by:</strong> {{ swag.user.username }}<br>
                             <strong>Added on:</strong> {{ swag.created_at|date:"F j, Y" }}
                         </p>
-                        
+
                         <div class="mb-3">
                             <strong>Rating:</strong>
                             {% for i in "12345" %}
@@ -48,7 +48,7 @@
                             {% endfor %}
                             ({{ swag.rating }}/5)
                         </div>
-                        
+
                         {% if swag.comments %}
                             <div class="mb-3">
                                 <strong>Comments:</strong>
