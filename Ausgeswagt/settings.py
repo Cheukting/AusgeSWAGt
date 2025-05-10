@@ -140,7 +140,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Digital Ocean Spaces configuration
 USE_SPACES = os.environ.get('USE_SPACES', 'False') == 'True'
-USE_SPACES = True
 
 if USE_SPACES:
     # AWS S3 / Digital Ocean Spaces settings
@@ -157,7 +156,6 @@ if USE_SPACES:
     AWS_QUERYSTRING_AUTH = False
 
     # Use S3 for media files
-    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3.S3Storage",
