@@ -53,6 +53,13 @@ This guide will help you deploy the Inswags Django application to DigitalOcean A
    - `DATABASE_URL`: Will be automatically set to connect to your database
    - `ALLOWED_HOSTS`: Will be automatically set to your app's domain
 
+   For Digital Ocean Spaces integration, you'll need to add these additional environment variables:
+   - `USE_SPACES`: Set to "True" to enable Digital Ocean Spaces for file storage
+   - `SPACES_ACCESS_KEY_ID`: Your Digital Ocean Spaces access key
+   - `SPACES_SECRET_ACCESS_KEY`: Your Digital Ocean Spaces secret key
+   - `SPACES_BUCKET_NAME`: The name of your Digital Ocean Spaces bucket
+   - `SPACES_REGION`: The region of your Digital Ocean Spaces (default is "nyc3")
+
 6. **Deploy your App**
 
    - Review all settings
@@ -99,8 +106,40 @@ To run this application locally:
 - `runtime.txt`: Specifies the Python version
 - `requirements.txt`: Lists all Python dependencies
 
+## Setting Up Digital Ocean Spaces
+
+This application can use Digital Ocean Spaces for storing user-uploaded files. Follow these steps to set it up:
+
+1. **Create a Spaces Bucket**
+   - Go to the [DigitalOcean Cloud Control Panel](https://cloud.digitalocean.com/)
+   - Click on "Spaces" in the left sidebar
+   - Click "Create a Space"
+   - Select a region (e.g., nyc3)
+   - Choose a unique name for your bucket
+   - Configure file access (recommended: "Restrict File Listing")
+   - Click "Create a Space"
+
+2. **Create Access Keys**
+   - In the DigitalOcean Cloud Control Panel, go to "API" in the left sidebar
+   - Under "Spaces access keys", click "Generate New Key"
+   - Enter a name for your key
+   - Copy both the access key and secret key (you won't be able to see the secret key again)
+
+3. **Configure Environment Variables**
+   - In your App Platform settings, add the environment variables listed in the "Set Environment Variables" section above
+   - Set `USE_SPACES` to "True"
+   - Add your access key, secret key, bucket name, and region
+
+4. **CORS Configuration (if needed)**
+   - If you're uploading files directly from the browser, you may need to configure CORS
+   - In your Space settings, go to the "Settings" tab
+   - Under "CORS", add your app's domain to the "Origin" field
+   - Set "Allowed Methods" to include at least GET, PUT, POST
+   - Click "Save"
+
 ## Additional Resources
 
 - [DigitalOcean App Platform Documentation](https://docs.digitalocean.com/products/app-platform/)
+- [DigitalOcean Spaces Documentation](https://docs.digitalocean.com/products/spaces/)
 - [Django Documentation](https://docs.djangoproject.com/)
 - [How to Deploy Django to App Platform Tutorial](https://www.digitalocean.com/community/tutorials/how-to-deploy-django-to-app-platform)

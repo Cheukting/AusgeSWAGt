@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'swags',
 ]
 
@@ -136,6 +137,25 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media files (User uploaded files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Digital Ocean Spaces configuration
+USE_SPACES = os.environ.get('USE_SPACES', 'False') == 'True'
+
+if USE_SPACES:
+    # AWS S3 / Digital Ocean Spaces settings
+    AWS_ACCESS_KEY_ID = os.environ.get('SPACES_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('SPACES_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('SPACES_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = f"https://{os.environ.get('SPACES_REGION', 'nyc3')}.digitaloceanspaces.com"
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_LOCATION = 'media'
+
+    # Use S3 for media files
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
