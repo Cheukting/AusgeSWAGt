@@ -140,6 +140,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Digital Ocean Spaces configuration
 USE_SPACES = os.environ.get('USE_SPACES', 'False') == 'True'
+USE_SPACES = True
 
 if USE_SPACES:
     # AWS S3 / Digital Ocean Spaces settings
