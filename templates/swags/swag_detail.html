@@ -39,15 +39,41 @@
 
                         <div class="mb-3">
                             <strong>Rating:</strong>
-                            {% for i in "12345" %}
-                                {% if forloop.counter <= swag.rating %}
-                                    <span class="text-warning">★</span>
-                                {% else %}
-                                    <span class="text-muted">☆</span>
-                                {% endif %}
-                            {% endfor %}
+                            {% with ''|center:10 as range %}
+                                {% for _ in range %}
+                                    {% with forloop.counter|floatformat:1 as star_value %}
+                                        {% if forloop.counter|divisibleby:2 %}
+                                            {% if star_value <= swag.rating %}
+                                                <span class="text-warning">★</span>
+                                            {% elif star_value == swag.rating|add:0.5 %}
+                                                <span class="text-warning">★</span>
+                                            {% else %}
+                                                <span class="text-muted">☆</span>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if star_value <= swag.rating %}
+                                                <span class="text-warning half-star">★</span>
+                                            {% elif star_value == swag.rating|add:0.5 %}
+                                                <span class="text-warning half-star">★</span>
+                                            {% else %}
+                                                <span class="text-muted half-star">☆</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endfor %}
+                            {% endwith %}
                             ({{ swag.rating }}/5)
                         </div>
+                        <style>
+                            .half-star {
+                                position: relative;
+                                display: inline-block;
+                                width: 0.5em;
+                                overflow: hidden;
+                                font-size: 1em;
+                                margin-left: -0.2em;
+                            }
+                        </style>
 
                         {% if swag.comments %}
                             <div class="mb-3">

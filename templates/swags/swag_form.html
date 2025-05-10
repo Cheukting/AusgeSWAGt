@@ -47,11 +47,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="id_rating" class="form-label">Rating (1-5)</label>
-                        <input type="number" name="rating" min="1" max="5" class="form-control {% if form.rating.errors %}is-invalid{% endif %}" 
-                               id="id_rating" value="{{ form.rating.value|default:'5' }}" required>
+                        <label for="id_rating" class="form-label">Rating (1-5 stars, half-star increments allowed)</label>
+                        {{ form.rating }}
                         {% if form.rating.errors %}
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback d-block">
                                 {{ form.rating.errors.0 }}
                             </div>
                         {% endif %}
