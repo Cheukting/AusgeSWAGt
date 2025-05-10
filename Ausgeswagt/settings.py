@@ -155,7 +155,14 @@ if USE_SPACES:
     AWS_LOCATION = 'media'
 
     # Use S3 for media files
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Boto3Storage",
+            "OPTIONS": {
+        },
+    },
+    }
     MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/"
 
 # Default primary key field type
