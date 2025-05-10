@@ -167,6 +167,7 @@ if USE_SPACES:
             },
     }
     MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/"
+    MEDIA_ROOT = f"{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
