@@ -8,12 +8,12 @@ from django.utils.safestring import mark_safe
 class StarRatingWidget(forms.Widget):
     def render(self, name, value, attrs=None, renderer=None):
         html = f'<div class="star-rating">'
-        html += f'<input type="hidden" name="{name}" id="id_{name}" value="{value or 5.0}">'
+        html += f'<input type="hidden" name="{name}" id="id_{name}" value="{value or 5}">'
 
-        # Create stars with half-star increments
-        for i in range(1, 11):  # 1 to 10 for half-star increments (1, 1.5, 2, 2.5, etc.)
-            star_value = i / 2.0
-            checked = 'checked' if value and float(value) >= star_value else ''
+        # Create stars with full-star increments only
+        for i in range(1, 6):  # 1 to 5 for full-star increments
+            star_value = i
+            checked = 'checked' if value and int(float(value)) >= star_value else ''
             html += f'''
             <input type="radio" id="star-{i}" name="star-{name}" value="{star_value}" {checked}
                 onclick="document.getElementById('id_{name}').value = this.value;">
@@ -37,7 +37,7 @@ class StarRatingWidget(forms.Widget):
                 font-size: 1.5em;
                 padding: 0;
                 cursor: pointer;
-                width: 0.5em;
+                width: 1em;
                 overflow: hidden;
             }
             .star-rating label:before {

@@ -8,11 +8,9 @@ class Swag(models.Model):
     photo = models.ImageField(upload_to='swags/', blank=True, null=True)
     company = models.CharField(max_length=100)
     conference = models.CharField(max_length=100)
-    rating = models.DecimalField(
-        max_digits=2, 
-        decimal_places=1,
-        validators=[MinValueValidator(1.0), MaxValueValidator(5.0)],
-        help_text="Rating from 1 to 5 stars (half-star increments allowed)"
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Rating from 1 to 5 stars"
     )
     comments = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='swags')

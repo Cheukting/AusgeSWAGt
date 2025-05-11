@@ -31,9 +31,7 @@
                             {% with ''|center:5 as range %}
                                 {% for _ in range %}
                                     {% with forloop.counter as star_index %}
-                                        {% if star_index <= swag.rating|floatformat:0|add:0 %}
-                                            <span class="text-warning">★</span>
-                                        {% elif star_index == swag.rating|floatformat:0|add:1 and swag.rating|floatformat:1|slice:"-1:" == "5" %}
+                                        {% if star_index <= swag.rating %}
                                             <span class="text-warning">★</span>
                                         {% else %}
                                             <span class="text-muted">☆</span>
