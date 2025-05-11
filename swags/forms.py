@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Swag
+from .models import Swag, SwagComment, SwagRating
 from django.forms.widgets import NumberInput
 from django.utils.safestring import mark_safe
 
@@ -74,3 +74,19 @@ class SwagSearchForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Search swags...'})
     )
+
+class SwagCommentForm(forms.ModelForm):
+    class Meta:
+        model = SwagComment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment...'}),
+        }
+
+class SwagRatingForm(forms.ModelForm):
+    class Meta:
+        model = SwagRating
+        fields = ['rating']
+        widgets = {
+            'rating': StarRatingWidget(),
+        }

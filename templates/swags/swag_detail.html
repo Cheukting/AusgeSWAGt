@@ -38,7 +38,7 @@
                         </p>
 
                         <div class="mb-3">
-                            <strong>Rating:</strong>
+                            <strong>Owner's Rating:</strong>
                             {% with ''|center:5 as range %}
                                 {% for _ in range %}
                                     {% with forloop.counter as star_index %}
@@ -53,14 +53,83 @@
                             ({{ swag.rating }}/5)
                         </div>
 
+                        {% if swag.ratings.exists %}
+                        <div class="mb-3">
+                            <strong>Average User Rating:</strong>
+                            {% with ''|center:5 as range %}
+                                {% for _ in range %}
+                                    {% with forloop.counter as star_index %}
+                                        {% if star_index <= swag.average_rating %}
+                                            <span class="text-warning">★</span>
+                                        {% else %}
+                                            <span class="text-muted">☆</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endfor %}
+                            {% endwith %}
+                            ({{ swag.average_rating|floatformat:1 }}/5)
+                        </div>
+                        {% endif %}
+
                         {% if swag.comments %}
                             <div class="mb-3">
-                                <strong>Comments:</strong>
+                                <strong>Owner's Comments:</strong>
                                 <p class="card-text">{{ swag.comments|linebreaks }}</p>
                             </div>
                         {% endif %}
                     </div>
                 </div>
+            </div>
+        </div>
+
+        {% if user.is_authenticated and user != swag.user %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Rate this Swag</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ rating_form.as_p }}
+                    <button type="submit" name="rating_submit" class="btn btn-primary">Submit Rating</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>User Comments</h4>
+            </div>
+            <div class="card-body">
+                {% if comments %}
+                    {% for comment in comments %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ comment.user.username }}</strong>
+                                <small class="text-muted">{{ comment.created_at|date:"F j, Y" }}</small>
+                            </div>
+                            <p>{{ comment.text|linebreaks }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <div class="mt-4">
+                        <h5>Add a Comment</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ comment_form.as_p }}
+                            <button type="submit" name="comment_submit" class="btn btn-primary">Submit Comment</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info mt-3">
+                        <a href="{% url 'login' %}">Log in</a> to add a comment.
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

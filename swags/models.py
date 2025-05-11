@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Avg
 
 # Create your models here.
 class Swag(models.Model):
@@ -19,5 +20,37 @@ class Swag(models.Model):
     def __str__(self):
         return f"{self.name} from {self.company} ({self.conference})"
 
+    def average_rating(self):
+        avg = self.ratings.aggregate(Avg('rating'))['rating__avg']
+        return avg if avg else self.rating
+
     class Meta:
         ordering = ['-created_at']
+
+class SwagComment(models.Model):
+    swag = models.ForeignKey(Swag, on_delete=models.CASCADE, related_name='user_comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.swag.name}"
+
+class SwagRating(models.Model):
+    swag = models.ForeignKey(Swag, on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Rating from 1 to 5 stars"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('swag', 'user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Rating of {self.rating} by {self.user.username} for {self.swag.name}"

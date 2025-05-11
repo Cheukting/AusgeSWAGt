@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .forms import UserRegisterForm, SwagForm, SwagSearchForm
-from .models import Swag
+from .forms import UserRegisterForm, SwagForm, SwagSearchForm, SwagCommentForm, SwagRatingForm
+from .models import Swag, SwagComment, SwagRating
 
 # Create your views here.
 def home(request):
@@ -70,9 +70,59 @@ def swag_update(request, pk):
     return render(request, 'swags/swag_form.html', {'form': form, 'title': 'Update Swag'})
 
 def swag_detail(request, pk):
-    """View for displaying a single swag item"""
+    """View for displaying a single swag item and handling comments and ratings"""
     swag = get_object_or_404(Swag, pk=pk)
-    return render(request, 'swags/swag_detail.html', {'swag': swag})
+    comments = SwagComment.objects.filter(swag=swag)
+    user_rating = None
+
+    # Initialize forms
+    comment_form = None
+    rating_form = None
+
+    if request.user.is_authenticated:
+        # Check if user has already rated this swag
+        try:
+            user_rating = SwagRating.objects.get(swag=swag, user=request.user)
+            rating_form = SwagRatingForm(instance=user_rating)
+        except SwagRating.DoesNotExist:
+            rating_form = SwagRatingForm()
+
+        comment_form = SwagCommentForm()
+
+        # Handle comment submission
+        if request.method == 'POST' and 'comment_submit' in request.POST:
+            comment_form = SwagCommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.swag = swag
+                comment.user = request.user
+                comment.save()
+                messages.success(request, 'Your comment has been added!')
+                return redirect('swag_detail', pk=swag.pk)
+
+        # Handle rating submission
+        if request.method == 'POST' and 'rating_submit' in request.POST:
+            if user_rating:
+                rating_form = SwagRatingForm(request.POST, instance=user_rating)
+            else:
+                rating_form = SwagRatingForm(request.POST)
+
+            if rating_form.is_valid():
+                rating = rating_form.save(commit=False)
+                rating.swag = swag
+                rating.user = request.user
+                rating.save()
+                messages.success(request, 'Your rating has been saved!')
+                return redirect('swag_detail', pk=swag.pk)
+
+    context = {
+        'swag': swag,
+        'comments': comments,
+        'comment_form': comment_form,
+        'rating_form': rating_form,
+        'user_rating': user_rating,
+    }
+    return render(request, 'swags/swag_detail.html', context)
 
 @login_required
 def user_swags(request):
