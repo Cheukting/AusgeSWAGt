@@ -11,7 +11,7 @@ class StarRatingWidget(forms.Widget):
         html += f'<input type="hidden" name="{name}" id="id_{name}" value="{value or 5}">'
 
         # Create stars with full-star increments only
-        for i in range(1, 6):  # 1 to 5 for full-star increments
+        for i in range(5, 0, -1):  # 5 to 1 for full-star increments (reversed to match rtl display)
             star_value = i
             checked = 'checked' if value and int(float(value)) >= star_value else ''
             html += f'''
