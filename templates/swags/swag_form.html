@@ -181,7 +181,18 @@
                             const swagCard = document.createElement('div');
                             swagCard.className = 'card mb-2';
 
-                            let swagHtml = `
+                            let swagHtml = '';
+
+                            // Add image if available
+                            if (swag.photo_url) {
+                                swagHtml += `<img src="${swag.photo_url}" class="card-img-top" alt="${swag.name}" style="height: 120px; object-fit: cover;">`;
+                            } else {
+                                swagHtml += `<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 120px;">
+                                    <span class="text-muted small">No Image</span>
+                                </div>`;
+                            }
+
+                            swagHtml += `
                                 <div class="card-body p-2">
                                     <h6 class="card-title mb-1">${swag.name}</h6>
                                     <p class="card-text mb-1 small">
