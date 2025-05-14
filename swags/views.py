@@ -142,6 +142,18 @@ def get_suggestions(request):
     # Get distinct values for the specified field that contain the query
     suggestions = Swag.objects.filter(**{f"{field}__icontains": query}) \
                              .values_list(field, flat=True) \
-                             .distinct()[:10]  # Limit to 10 suggestions
+                             .distinct()
 
-    return JsonResponse({'suggestions': list(suggestions)})
+    # Remove duplicates case-insensitively
+    unique_suggestions = []
+    lower_suggestions = set()
+
+    for suggestion in suggestions:
+        if suggestion.lower() not in lower_suggestions:
+            lower_suggestions.add(suggestion.lower())
+            unique_suggestions.append(suggestion)
+
+    # Limit to 10 suggestions
+    unique_suggestions = unique_suggestions[:10]
+
+    return JsonResponse({'suggestions': unique_suggestions})
