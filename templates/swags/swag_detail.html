@@ -33,6 +33,7 @@
 
                         <p class="card-text">
                             <strong>Conference:</strong> {{ swag.conference }}<br>
+                            {% if swag.year %}<strong>Year:</strong> {{ swag.year }}<br>{% endif %}
                             <strong>Added by:</strong> {{ swag.user.username }}<br>
                             <strong>Added on:</strong> {{ swag.created_at|date:"F j, Y" }}
                         </p>

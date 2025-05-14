@@ -9,6 +9,12 @@ class Swag(models.Model):
     photo = models.ImageField(upload_to='swags/', blank=True, null=True)
     company = models.CharField(max_length=100)
     conference = models.CharField(max_length=100)
+    year = models.IntegerField(
+        validators=[MinValueValidator(1900), MaxValueValidator(2100)],
+        help_text="Year of the conference",
+        null=True,
+        blank=True
+    )
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
         help_text="Rating from 1 to 5 stars"

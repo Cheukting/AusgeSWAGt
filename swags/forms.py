@@ -62,9 +62,10 @@ class UserRegisterForm(UserCreationForm):
 class SwagForm(forms.ModelForm):
     class Meta:
         model = Swag
-        fields = ['name', 'photo', 'company', 'conference', 'rating', 'comments']
+        fields = ['name', 'photo', 'company', 'conference', 'year', 'rating', 'comments']
         widgets = {
             'rating': StarRatingWidget(),
+            'year': forms.NumberInput(attrs={'min': '1900', 'max': '2100'}),
         }
 
 class SwagSearchForm(forms.Form):

@@ -24,7 +24,8 @@
                         <h5 class="card-title">{{ swag.name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ swag.company }}</h6>
                         <p class="card-text">
-                            <small class="text-muted">Conference: {{ swag.conference }}</small><br>
+                            <small class="text-muted">Conference: {{ swag.conference }}</small>
+                            {% if swag.year %}<br><small class="text-muted">Year: {{ swag.year }}</small>{% endif %}<br>
                             <small class="text-muted">Added on: {{ swag.created_at|date:"M d, Y" }}</small>
                         </p>
                         <div class="mb-2">

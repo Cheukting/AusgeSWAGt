@@ -47,6 +47,18 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="id_year" class="form-label">Year</label>
+                        <input type="number" name="year" class="form-control {% if form.year.errors %}is-invalid{% endif %}" 
+                               id="id_year" value="{{ form.year.value|default:'' }}" min="1900" max="2100">
+                        {% if form.year.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.year.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Year of the conference</div>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="id_rating" class="form-label">Rating (1-5 stars)</label>
                         {{ form.rating }}
                         {% if form.rating.errors %}
