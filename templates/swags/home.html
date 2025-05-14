@@ -33,16 +33,17 @@
                         <h5 class="card-title">{{ swag.name }}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{{ swag.company }}</h6>
                         <p class="card-text">
-                            <small class="text-muted">Conference: {{ swag.conference }}</small><br>
+                            <small class="text-muted">Conference: {{ swag.conference }}</small>
+                            {% if swag.year %}<br><small class="text-muted">Year: {{ swag.year }}</small>{% endif %}<br>
                             <small class="text-muted">Added by: {{ swag.user.username }}</small>
                         </p>
                         <div class="mb-2">
                             {% with ''|center:5 as range %}
                                 {% for _ in range %}
                                     {% with forloop.counter as star_index %}
-                                        {% if star_index <= swag.rating|floatformat:0|add:0 %}
+                                        {% if star_index <= swag.average_rating|floatformat:0|add:0 %}
                                             <span class="text-warning">★</span>
-                                        {% elif star_index == swag.rating|floatformat:0|add:1 and swag.rating|floatformat:1|slice:"-1:" == "5" %}
+                                        {% elif star_index == swag.average_rating|floatformat:0|add:1 and swag.average_rating|floatformat:1|slice:"-1:" == "5" %}
                                             <span class="text-warning">★</span>
                                         {% else %}
                                             <span class="text-muted">☆</span>
