@@ -51,6 +51,7 @@
                                     {% endwith %}
                                 {% endfor %}
                             {% endwith %}
+                            <small class="text-muted ms-2">({{ swag.ratings.count }} user{{ swag.ratings.count|pluralize }})</small>
                         </div>
                         <a href="{% url 'swag_detail' swag.pk %}" class="btn btn-sm btn-outline-primary">View Details</a>
                     </div>
