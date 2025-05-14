@@ -12,4 +12,5 @@ urlpatterns = [
     path('swag/<int:pk>/update/', views.swag_update, name='swag_update'),
     path('my-swags/', views.user_swags, name='user_swags'),
     path('api/suggestions/', views.get_suggestions, name='get_suggestions'),
+    path('api/similar-swags/', views.get_similar_swags, name='get_similar_swags'),
 ]

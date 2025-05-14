@@ -157,3 +157,43 @@ def get_suggestions(request):
     unique_suggestions = unique_suggestions[:10]
 
     return JsonResponse({'suggestions': unique_suggestions})
+
+def get_similar_swags(request):
+    """API endpoint to find similar swags based on name, company, conference, and year"""
+    name = request.GET.get('name', '').strip()
+    company = request.GET.get('company', '').strip()
+    conference = request.GET.get('conference', '').strip()
+    year = request.GET.get('year', '').strip()
+
+    # Return empty if no search criteria provided
+    if not any([name, company, conference, year]):
+        return JsonResponse({'similar_swags': []})
+
+    # Start with all swags
+    query = Swag.objects.all()
+
+    # Apply filters based on provided fields
+    if name:
+        query = query.filter(name__icontains=name)
+    if company:
+        query = query.filter(company__icontains=company)
+    if conference:
+        query = query.filter(conference__icontains=conference)
+    if year and year.isdigit():
+        query = query.filter(year=int(year))
+
+    # Get the similar swags with their details
+    similar_swags = []
+    for swag in query[:5]:  # Limit to 5 similar swags
+        swag_data = {
+            'id': swag.pk,
+            'name': swag.name,
+            'company': swag.company,
+            'conference': swag.conference,
+            'year': swag.year,
+            'rating': swag.rating,
+            'photo_url': swag.photo.url if swag.photo else None
+        }
+        similar_swags.append(swag_data)
+
+    return JsonResponse({'similar_swags': similar_swags})

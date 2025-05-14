@@ -3,14 +3,14 @@
 {% block title %}{{ title }} - AusgeSWAGt{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
+<div class="row">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
                 <h2 class="text-center">{{ title }}</h2>
             </div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" id="swagForm">
                     {% csrf_token %}
 
                     <div class="mb-3">
@@ -104,6 +104,16 @@
             </div>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="card position-sticky" id="similarSwags" style="display: none; top: 20px;">
+            <div class="card-header">
+                <h5>Similar Swags</h5>
+            </div>
+            <div class="card-body" id="similarSwagsContainer" style="max-height: 500px; overflow-y: auto;">
+                <!-- Similar swags will be displayed here -->
+            </div>
+        </div>
+    </div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -112,6 +122,117 @@
 
         // Setup autocomplete for conference field
         setupAutocomplete('id_conference', 'conference');
+
+        // Setup similar swags functionality
+        setupSimilarSwags();
     });
+
+    function setupSimilarSwags() {
+        const nameInput = document.getElementById('id_name');
+        const companyInput = document.getElementById('id_company');
+        const conferenceInput = document.getElementById('id_conference');
+        const yearInput = document.getElementById('id_year');
+        const similarSwagsCard = document.getElementById('similarSwags');
+        const similarSwagsContainer = document.getElementById('similarSwagsContainer');
+
+        // Fields to monitor for changes
+        const fields = [nameInput, companyInput, conferenceInput, yearInput];
+
+        // Debounce function to limit API calls
+        let debounceTimer;
+
+        // Function to fetch similar swags
+        function fetchSimilarSwags() {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(function() {
+                const name = nameInput.value.trim();
+                const company = companyInput.value.trim();
+                const conference = conferenceInput.value.trim();
+                const year = yearInput.value.trim();
+
+                // Only proceed if at least one field has a value
+                if (!name && !company && !conference && !year) {
+                    similarSwagsCard.style.display = 'none';
+                    return;
+                }
+
+                // Build query string
+                const params = new URLSearchParams();
+                if (name) params.append('name', name);
+                if (company) params.append('company', company);
+                if (conference) params.append('conference', conference);
+                if (year) params.append('year', year);
+
+                // Fetch similar swags from API
+                fetch(`/api/similar-swags/?${params.toString()}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear previous results
+                        similarSwagsContainer.innerHTML = '';
+
+                        if (data.similar_swags.length === 0) {
+                            similarSwagsCard.style.display = 'none';
+                            return;
+                        }
+
+                        // Display similar swags
+                        data.similar_swags.forEach(swag => {
+                            const swagCard = document.createElement('div');
+                            swagCard.className = 'card mb-2';
+
+                            let swagHtml = `
+                                <div class="card-body p-2">
+                                    <h6 class="card-title mb-1">${swag.name}</h6>
+                                    <p class="card-text mb-1 small">
+                                        <strong>Company:</strong> ${swag.company}<br>
+                                        <strong>Conference:</strong> ${swag.conference}
+                                    `;
+
+                            if (swag.year) {
+                                swagHtml += `<br><strong>Year:</strong> ${swag.year}`;
+                            }
+
+                            swagHtml += `
+                                    </p>
+                                    <div class="mb-1">
+                                        ${getRatingStars(swag.rating)}
+                                    </div>
+                                    <a href="/swag/${swag.id}/" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                            `;
+
+                            swagCard.innerHTML = swagHtml;
+                            similarSwagsContainer.appendChild(swagCard);
+                        });
+
+                        // Show the similar swags card
+                        similarSwagsCard.style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching similar swags:', error);
+                        similarSwagsCard.style.display = 'none';
+                    });
+            }, 300); // 300ms debounce
+        }
+
+        // Helper function to generate rating stars
+        function getRatingStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<span class="text-warning">★</span>';
+                } else {
+                    stars += '<span class="text-muted">☆</span>';
+                }
+            }
+            return stars;
+        }
+
+        // Add event listeners to all fields
+        fields.forEach(field => {
+            field.addEventListener('input', fetchSimilarSwags);
+        });
+    }
 </script>
 {% endblock %}
