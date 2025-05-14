@@ -254,5 +254,105 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Global autocomplete function that can be used in any form
+        function setupAutocomplete(inputId, fieldName) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            // Create suggestions container
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.className = 'autocomplete-suggestions';
+            suggestionsContainer.style.display = 'none';
+            suggestionsContainer.style.position = 'absolute';
+            suggestionsContainer.style.zIndex = '1000';
+            suggestionsContainer.style.maxHeight = '200px';
+            suggestionsContainer.style.overflowY = 'auto';
+            suggestionsContainer.style.width = input.offsetWidth + 'px';
+            suggestionsContainer.style.backgroundColor = '#fff';
+            suggestionsContainer.style.border = '1px solid #ddd';
+            suggestionsContainer.style.borderRadius = '4px';
+            suggestionsContainer.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+
+            // Insert suggestions container after input
+            input.parentNode.insertBefore(suggestionsContainer, input.nextSibling);
+
+            // Update position on window resize
+            window.addEventListener('resize', function() {
+                suggestionsContainer.style.width = input.offsetWidth + 'px';
+            });
+
+            // Handle input changes
+            let debounceTimer;
+            input.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function() {
+                    const query = input.value.trim();
+                    if (query.length < 2) {
+                        suggestionsContainer.style.display = 'none';
+                        return;
+                    }
+
+                    // Fetch suggestions from API
+                    fetch(`/api/suggestions/?query=${encodeURIComponent(query)}&field=${fieldName}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestionsContainer.innerHTML = '';
+
+                            if (data.suggestions.length === 0) {
+                                suggestionsContainer.style.display = 'none';
+                                return;
+                            }
+
+                            data.suggestions.forEach(suggestion => {
+                                const item = document.createElement('div');
+                                item.className = 'autocomplete-item';
+                                item.style.padding = '8px 12px';
+                                item.style.cursor = 'pointer';
+                                item.style.borderBottom = '1px solid #eee';
+                                item.textContent = suggestion;
+
+                                item.addEventListener('mouseenter', function() {
+                                    this.style.backgroundColor = '#f8f9fa';
+                                });
+
+                                item.addEventListener('mouseleave', function() {
+                                    this.style.backgroundColor = '';
+                                });
+
+                                item.addEventListener('click', function() {
+                                    input.value = suggestion;
+                                    suggestionsContainer.style.display = 'none';
+                                });
+
+                                suggestionsContainer.appendChild(item);
+                            });
+
+                            suggestionsContainer.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching suggestions:', error);
+                            suggestionsContainer.style.display = 'none';
+                        });
+                }, 300);
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target !== input && e.target !== suggestionsContainer) {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+
+            // Show suggestions on focus if input has value
+            input.addEventListener('focus', function() {
+                if (input.value.trim().length >= 2) {
+                    const event = new Event('input');
+                    input.dispatchEvent(event);
+                }
+            });
+        }
+    </script>
 </body>
 </html>

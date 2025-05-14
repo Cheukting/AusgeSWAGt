@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import JsonResponse
 from .forms import UserRegisterForm, SwagForm, SwagSearchForm, SwagCommentForm, SwagRatingForm
 from .models import Swag, SwagComment, SwagRating
 
@@ -129,3 +130,18 @@ def user_swags(request):
     """View for displaying the current user's swags"""
     swags = Swag.objects.filter(user=request.user)
     return render(request, 'swags/user_swags.html', {'swags': swags})
+
+def get_suggestions(request):
+    """API endpoint to provide suggestions for conference and company names"""
+    query = request.GET.get('query', '')
+    field = request.GET.get('field', '')
+
+    if not query or not field or field not in ['conference', 'company']:
+        return JsonResponse({'suggestions': []})
+
+    # Get distinct values for the specified field that contain the query
+    suggestions = Swag.objects.filter(**{f"{field}__icontains": query}) \
+                             .values_list(field, flat=True) \
+                             .distinct()[:10]  # Limit to 10 suggestions
+
+    return JsonResponse({'suggestions': list(suggestions)})

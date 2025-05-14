@@ -105,4 +105,13 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup autocomplete for company field
+        setupAutocomplete('id_company', 'company');
+
+        // Setup autocomplete for conference field
+        setupAutocomplete('id_conference', 'conference');
+    });
+</script>
 {% endblock %}
