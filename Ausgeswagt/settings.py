@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',
     'swags',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -178,12 +179,13 @@ LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 
 # Email settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
-# For production, use SMTP backend
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.example.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@example.com'
-# EMAIL_HOST_PASSWORD = 'your-password'
-DEFAULT_FROM_EMAIL = 'noreply@ausgeswagt.example.com'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+# For production, use Anymail with SendGrid
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+
+# SendGrid settings
+ANYMAIL = {
+    "SENDGRID_API_KEY": os.environ.get('SENDGRID_API_KEY', ''),
+}
+
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@ausgeswagt.cheuk.dev')
