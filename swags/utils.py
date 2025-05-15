@@ -29,10 +29,10 @@ def send_verification_email(user, request):
     user.profile.email_token = token
     user.profile.save()
 
-    # Build the verification URL
-    verification_url = request.build_absolute_uri(
-        reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
-    )
+    # Build the verification URL with HTTPS
+    verification_path = reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
+    # Force HTTPS for verification URL
+    verification_url = request.build_absolute_uri(verification_path).replace('http://', 'https://')
 
     # Email content
     subject = 'Verify your email address'
