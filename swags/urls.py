@@ -7,6 +7,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('verify-email/<str:uidb64>/<str:token>/', views.verify_email, name='verify_email'),
     path('swag/new/', views.swag_create, name='swag_create'),
     path('swag/<int:pk>/', views.swag_detail, name='swag_detail'),
     path('swag/<int:pk>/update/', views.swag_update, name='swag_update'),

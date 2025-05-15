@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.models import User
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from .forms import UserRegisterForm, SwagForm, SwagSearchForm, SwagCommentForm, SwagRatingForm
-from .models import Swag, SwagComment, SwagRating
+from .models import Swag, SwagComment, SwagRating, UserProfile
+from .utils import email_verification_token
 
 # Create your views here.
 def home(request):
@@ -33,9 +37,23 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Create user but don't save to database yet
+            user = form.save(commit=False)
+            # Set user as inactive until email is verified
+            user.is_active = False
+            # Save the user
+            user.save()
+
+            # Import here to avoid circular import
+            from .utils import send_verification_email
+            # Send verification email
+            send_verification_email(user, request)
+
             username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}! You can now log in.')
+            messages.success(
+                request, 
+                f'Account created for {username}! Please check your email to verify your account.'
+            )
             return redirect('login')
     else:
         form = UserRegisterForm()
@@ -197,3 +215,29 @@ def get_similar_swags(request):
         similar_swags.append(swag_data)
 
     return JsonResponse({'similar_swags': similar_swags})
+
+def verify_email(request, uidb64, token):
+    """View for verifying email addresses"""
+    try:
+        # Decode the user id
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    # Check if the user exists and the token is valid
+    if user is not None and email_verification_token.check_token(user, token):
+        # Activate the user
+        user.is_active = True
+        user.save()
+
+        # Mark email as verified
+        user.profile.email_verified = True
+        user.profile.email_token = None  # Clear the token
+        user.profile.save()
+
+        messages.success(request, 'Your email has been verified! You can now log in.')
+        return redirect('login')
+    else:
+        messages.error(request, 'The verification link is invalid or has expired.')
+        return redirect('home')
