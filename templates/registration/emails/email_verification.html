@@ -31,7 +31,7 @@
         }
         .button {
             display: inline-block;
-            background-color: var(--primary-color);
+            background-color: var(--secondary-color);
             color: #212529;
             text-decoration: none;
             padding: 10px 20px;
@@ -63,7 +63,7 @@
         <p>Thank you for registering on Ausgeswagt. To complete your registration, please verify your email address by clicking the button below:</p>
 
         <div style="text-align: center;">
-            <a href="{{ verification_url }}" class="button">Verify Email Address</a>
+            <a href="{{ verification_url }}" class="button" clicktracking=off>Verify Email Address</a>
         </div>
 
         <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
